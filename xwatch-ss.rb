@@ -5,13 +5,16 @@
 
 def usage
   print <<EOM
-usage:
+Usage:
   #{$0} [--debug]
         [--image image_file]
         [--interval sec]
         [--thres n]
         [--txt text]
         [--allow pat1] [--allow pat2] ...
+        [--version]
+Example:
+
 EOM
 end
 
