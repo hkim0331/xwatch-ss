@@ -2,7 +2,6 @@
 # coding: utf-8
 # this only for ubuntu, depends on xcowsay. not work on osx.
 #
-# FIXME: add --allow pat
 
 def usage
   print <<EOM
@@ -16,24 +15,36 @@ usage:
 EOM
 end
 
-$allow = %w{ 1e100.net }
+$allow = %w{ ssh imaps 1e100.net }
 
-# FIXME
+# FIXME: should compile $allow?
+# FIXME: avoid using global variables?
 def remove_allowed(array)
-  array
+  ret = []
+  puts "*before*\n#{array.join}" if $debug
+  array.each do |entry|
+    found = false
+    $allow.each do |pat|
+      if entry =~ /#{pat}/
+        found = true
+        break
+      end
+    end
+    ret.push(entry) unless found
+  end
+  puts "*after*\n#{ret.join}" if $debug
+  ret
 end
 
 def ss()
-  IO.popen("/bin/ss -rt | grep -v kyutech") do |pipe|
+  IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
     ret = remove_allowed(pipe.readlines)
-    puts ret if $debug
     ret.count
   end
 end
 
 def warn(image, txt)
   cmd = "xcowsay --image=#{image} #{txt}"
-  puts cmd if $debug
   system cmd
 end
 
@@ -48,6 +59,7 @@ end
 #
 # main starts here
 #
+
 if `which xcowsay` == ""
   print <<EOM
 #{$0} depends on xcowsay.
@@ -67,7 +79,6 @@ while (arg = ARGV.shift)
   when /--debug/
     $debug = true
     interval = 5
-    thres = 1
     txt = "デバッグ中です"
   when /--image/
     image = ARGV.shift
