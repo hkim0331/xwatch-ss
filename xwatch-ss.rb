@@ -15,31 +15,20 @@ usage:
 EOM
 end
 
-$allow = %w{ ssh imaps 1e100.net }
-
-# FIXME: should compile $allow?
-# FIXME: avoid using global variables?
-def remove_allowed(array)
-  ret = []
-  puts "*before*\n#{array.join}" if $debug
-  array.each do |entry|
-    found = false
-    $allow.each do |pat|
-      if entry =~ /#{pat}/
-        found = true
-        break
-      end
+def remove_permits(lines, permits)
+  puts "*before*\n#{lines.join}" if $debug
+  ret = lines.find_all do |line|
+    permits.all? do |pat|
+      line !~ pat
     end
-    ret.push(entry) unless found
   end
   puts "*after*\n#{ret.join}" if $debug
   ret
 end
 
-def ss()
+def ss(permits)
   IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
-    ret = remove_allowed(pipe.readlines)
-    ret.count
+    remove_permits(pipe.readlines, permits)
   end
 end
 
@@ -48,10 +37,10 @@ def warn(image, txt)
   system cmd
 end
 
-def xwatch(image, interval, thres, txt)
+def xwatch(image, interval, thres, txt, permits)
   puts "#{image}, #{interval}, #{thres}, #{txt}" if $debug
   while (true)
-    warn(image, txt) if ss() > thres
+    warn(image, txt) if ss(permits).count > thres
     sleep interval
   end
 end
@@ -69,10 +58,13 @@ EOM
 end
 
 $debug = false
+
+# initial values
 image = "./images/ghost-busters.png"
 interval = 30
 thres = 2
 txt = "授業と関係ないサイトを開いてないか？"
+allow = %w{ ssh imaps 1e100.net }
 
 while (arg = ARGV.shift)
   case arg
@@ -89,12 +81,12 @@ while (arg = ARGV.shift)
   when /--txt/
     txt = ARGV.shift
   when /--allow/
-    $allow.push ARGV.shift
+    allow.push ARGV.shift
   else
     usage()
     exit
   end
 end
 
-xwatch(image, interval, thres, txt)
-rails "bug. must not comes here."
+xwatch(image, interval, thres, txt, allow.map{|x| Regexp.new(x)})
+raise "bug. must not comes here."
