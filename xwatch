@@ -1,0 +1,4 @@
+#!/bin/sh
+
+DIR=/home/t/hkimura/xwatch-ss
+${DIR}/xwatch-ss.rb --image ${DIR}/images/ghost-busters.png
