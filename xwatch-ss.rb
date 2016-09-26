@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 # this only for ubuntu, depends on xcowsay. not work on osx.
-#
+# 2016-09-23
 
 def usage
   print <<EOM
@@ -63,11 +63,11 @@ end
 $debug = false
 
 # initial values
+allow = %w{ ssh imaps 1e100.net }
 image = "./images/ghost-busters.png"
 interval = 30
 thres = 2
 txt = "授業と関係ないサイトを開いてないか？"
-allow = %w{ ssh imaps 1e100.net }
 
 while (arg = ARGV.shift)
   case arg
