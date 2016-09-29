@@ -63,10 +63,11 @@ end
 $debug = false
 
 # initial values
-allow = %w{ ssh imaps 1e100.net }
+# 1e100.net amazonaws.com cloudfront.net
+allow = %w{ ssh imaps }
 image = "./images/ghost-busters.png"
 interval = 30
-thres = 2
+thres = 10
 txt = "授業と関係ないサイトを開いてないか？"
 
 while (arg = ARGV.shift)
