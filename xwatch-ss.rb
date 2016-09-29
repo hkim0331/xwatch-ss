@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 # this only for ubuntu, depends on xcowsay. not work on osx.
-# 2016-09-23
+# 2016-09-23, 2016-09-29
 
 def usage
   print <<EOM
