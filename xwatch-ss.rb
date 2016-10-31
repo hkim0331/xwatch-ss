@@ -41,7 +41,7 @@ def warn(image, txt)
 end
 
 def xwatch(image, interval, thres, txt, permits)
-  puts "#{image}, #{interval}, #{thres}, #{txt}" if $debug
+  puts "#{image}, #{interval}, #{thres}, #{txt}, #{permits}" if $debug
   while (true)
     warn(image, txt) if ss(permits).count > thres
     sleep interval
