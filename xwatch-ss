@@ -2,6 +2,6 @@
 
 DIR=/home/t/hkimura/xwatch-ss
 ${DIR}/xwatch-ss.rb \
-      --image ${DIR}/images/ghost-busters.png \
-      --check ${DIR}/Desktop/xwatch-ss.conf
+      --conf ${DIR}/Desktop/xwatch-ss.conf \
+      --image ${DIR}/images/ghost-busters.png
 
