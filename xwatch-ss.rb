@@ -40,10 +40,13 @@ def warn(image, txt)
   system cmd
 end
 
-def xwatch(image, interval, thres, txt, permits)
-  puts "#{image}, #{interval}, #{thres}, #{txt}" if $debug
+def xwatch(config, image, interval, thres, txt, permits)
+  puts "#{image}, #{interval}, #{thres}, #{txt}, #{permits}" if $debug
   while (true)
-    warn(image, txt) if ss(permits).count > thres
+    if File.exists?(config)
+      # must parse the file 'config', reflect its contents here.
+      warn(image, txt) if ss(permits).count > thres
+    end
     sleep interval
   end
 end
@@ -62,12 +65,14 @@ end
 
 $debug = false
 
-# initial values
+# change in isc.
+config = "./xwatch-ss.conf"
+
 # 1e100.net amazonaws.com cloudfront.net
 allow = %w{ ssh imaps }
 image = "./images/ghost-busters.png"
 interval = 30
-thres = 10
+thres = 15
 txt = "授業と関係ないサイトを開いてないか？"
 
 while (arg = ARGV.shift)
@@ -76,6 +81,8 @@ while (arg = ARGV.shift)
     $debug = true
     interval = 5
     txt = "デバッグ中です"
+  when /--conf/
+    config = ARGV.shift
   when /--image/
     image = ARGV.shift
   when /--interval/
@@ -86,11 +93,12 @@ while (arg = ARGV.shift)
     txt = ARGV.shift
   when /--allow/
     allow.push ARGV.shift
+
   else
     usage()
     exit
   end
 end
 
-xwatch(image, interval, thres, txt, allow.map{|x| Regexp.new(x)})
+xwatch(config, image, interval, thres, txt, allow.map{|x| Regexp.new(x)})
 raise "bug. must not comes here."
