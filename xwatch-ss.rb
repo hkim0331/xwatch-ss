@@ -7,6 +7,7 @@ def usage
   print <<EOM
 Usage:
   #{$0} [--debug]
+        [--conf config]
         [--image image_file]
         [--interval sec]
         [--thres n]
@@ -29,6 +30,7 @@ def remove_permits(lines, permits)
   ret
 end
 
+# linux only.
 def ss(permits)
   IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
     remove_permits(pipe.readlines, permits)
@@ -40,14 +42,27 @@ def warn(image, txt)
   system cmd
 end
 
+# only returns new value of thres in this version.
+def parse(config)
+  File.foreach(config) do |line|
+    next if line=~ /^#/
+    if line =~ /^\s*thres\s*=\s*(\d*)/
+      return $1.to_i
+    end
+  end
+  return 1000
+end
+
 def xwatch(config, image, interval, thres, txt, permits)
   puts "#{image}, #{interval}, #{thres}, #{txt}, #{permits}" if $debug
   while (true)
     if File.exists?(config)
-      # must parse the file 'config', reflect its contents here.
-      warn(image, txt) if ss(permits).count > thres
+      thres = parse(config)
+      puts "thres: #{thres}" if $debug
     end
+    warn(image, txt) if ss(permits).count > thres
     sleep interval
+    puts Time.now if $debug
   end
 end
 
@@ -65,7 +80,7 @@ end
 
 $debug = false
 
-# change in isc.
+# must change in isc.
 config = "./xwatch-ss.conf"
 
 # 1e100.net amazonaws.com cloudfront.net
@@ -79,7 +94,6 @@ while (arg = ARGV.shift)
   case arg
   when /--debug/
     $debug = true
-    interval = 5
     txt = "デバッグ中です"
   when /--conf/
     config = ARGV.shift

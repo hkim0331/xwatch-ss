@@ -1,0 +1,8 @@
+#!/bin/sh
+
+./xwatch-ss.rb \
+    --debug \
+    --conf ./xwatch-ss.conf \
+    --interval 5 \
+    --image ./images/ghost-busters.png
+
