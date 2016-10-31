@@ -29,6 +29,7 @@ def remove_permits(lines, permits)
   ret
 end
 
+# linux only.
 def ss(permits)
   IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
     remove_permits(pipe.readlines, permits)
@@ -40,13 +41,22 @@ def warn(image, txt)
   system cmd
 end
 
+# only returns new value of thres in this version.
+def parse(config)
+  File.foreach(config) do |line|
+    if line =~ /^\s*thres\s*=\s*(\d*)/
+      return $i.to_i
+    end
+  end
+end
+
 def xwatch(config, image, interval, thres, txt, permits)
   puts "#{image}, #{interval}, #{thres}, #{txt}, #{permits}" if $debug
   while (true)
     if File.exists?(config)
-      # must parse the file 'config', reflect its contents here.
-      warn(image, txt) if ss(permits).count > thres
+      thres = parse(config)
     end
+    warn(image, txt) if ss(permits).count > thres
     sleep interval
   end
 end
