@@ -76,6 +76,7 @@ image = "./images/ghost-busters.png"
 interval = 30
 thres = 15
 txt = "授業と関係ないサイトを開いてないか？"
+conf = "/home/t/hkimura/Desktop/xwatch-ss.conf"
 
 while (arg = ARGV.shift)
   case arg
