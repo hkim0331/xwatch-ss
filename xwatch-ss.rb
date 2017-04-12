@@ -30,6 +30,7 @@ def remove_permits(lines, permits)
   ret
 end
 
+# linux only.
 def ss(permits)
   IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
     remove_permits(pipe.readlines, permits)
@@ -46,6 +47,7 @@ def xwatch(conf, image, interval, thres, txt, permits)
   while File.exists?(conf)
     warn(image, txt) if ss(permits).count > thres
     sleep interval
+    puts Time.now if $debug
   end
 end
 
@@ -63,20 +65,23 @@ end
 
 $debug = false
 
-# initial values
+# must change in isc.
+config = "./xwatch-ss.conf"
+
 # 1e100.net amazonaws.com cloudfront.net
 allow = %w{ ssh imaps }
 image = "./images/ghost-busters.png"
 interval = 30
-thres = 10
+thres = 15
 txt = "授業と関係ないサイトを開いてないか？"
 
 while (arg = ARGV.shift)
   case arg
   when /--debug/
     $debug = true
-    interval = 5
     txt = "デバッグ中です"
+  when /--conf/
+    config = ARGV.shift
   when /--image/
     image = ARGV.shift
   when /--interval/
