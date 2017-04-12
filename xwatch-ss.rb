@@ -2,8 +2,10 @@
 # coding: utf-8
 # this only for ubuntu, depends on xcowsay. not work on osx.
 # 2016-09-23, 2016-09-29
+# 2017-04-12,
 
-def usage
+def usage(s)
+  puts s
   print <<EOM
 Usage:
   #{$0} [--debug]
@@ -95,7 +97,7 @@ while (arg = ARGV.shift)
   when /--conf/
     conf = ARGV.shift
   else
-    usage()
+    usage("unknown arg: #{arg}")
     exit
   end
 end
