@@ -7,6 +7,7 @@ def usage
   print <<EOM
 Usage:
   #{$0} [--debug]
+        [--conf file]
         [--image image_file]
         [--interval sec]
         [--thres n]
@@ -40,9 +41,9 @@ def warn(image, txt)
   system cmd
 end
 
-def xwatch(image, interval, thres, txt, permits)
-  puts "#{image}, #{interval}, #{thres}, #{txt}" if $debug
-  while (true)
+# FIXME: 0.3 は conf ファイルの存在確認だけ。内容を見ていない。
+def xwatch(conf, image, interval, thres, txt, permits)
+  while File.exists?(conf)
     warn(image, txt) if ss(permits).count > thres
     sleep interval
   end
@@ -86,11 +87,13 @@ while (arg = ARGV.shift)
     txt = ARGV.shift
   when /--allow/
     allow.push ARGV.shift
+  when /--conf/
+    conf = ARGV.shift
   else
     usage()
     exit
   end
 end
 
-xwatch(image, interval, thres, txt, allow.map{|x| Regexp.new(x)})
+xwatch(conf, image, interval, thres, txt, allow.map{|x| Regexp.new(x)})
 raise "bug. must not comes here."
