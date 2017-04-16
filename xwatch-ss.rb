@@ -67,9 +67,6 @@ end
 
 $debug = false
 
-# must change in isc.
-config = "./xwatch-ss.conf"
-
 # 1e100.net amazonaws.com cloudfront.net
 allow = %w{ ssh imaps }
 image = "./images/ghost-busters.png"
