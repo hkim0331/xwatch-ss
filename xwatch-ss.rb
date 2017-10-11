@@ -34,7 +34,7 @@ end
 
 # linux only.
 def ss(permits)
-  IO.popen("/bin/ss -rt | grep ESTAB | grep -v kyutech") do |pipe|
+  IO.popen("/bin/ss -bt state estabished| awk '{print $4}'") do |pipe|
     remove_permits(pipe.readlines, permits)
   end
 end
@@ -68,7 +68,8 @@ end
 $debug = false
 
 # 1e100.net amazonaws.com cloudfront.net
-allow = %w{ ssh imaps }
+allow = %w{ ^127 ^10 ^150.69 }
+
 image = "./images/ghost-busters.png"
 interval = 30
 thres = 15
