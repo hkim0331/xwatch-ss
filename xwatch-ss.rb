@@ -22,13 +22,13 @@ EOM
 end
 
 def remove_permits(lines, permits)
-  puts "*before*\n#{lines.join}" if $debug
+#  puts "*before*\n#{lines.join}" if $debug
   ret = lines.find_all do |line|
     permits.all? do |pat|
       line !~ pat
     end
   end
-  puts "*after*\n#{ret.join}" if $debug
+#  puts "*after*\n#{ret.join}" if $debug
   ret
 end
 
@@ -49,7 +49,7 @@ def xwatch(conf, image, interval, thres, txt, permits)
   while File.exists?(conf)
     count = ss(permits).count
     if $debug
-      puts "#{Time.now} permits: #{count} thres: #{thres}"
+      puts "#{Time.now} established: #{count} thres: #{thres}"
     end
     if ss(permits).count > thres
       warn(image, txt)
