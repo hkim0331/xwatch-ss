@@ -34,7 +34,7 @@ end
 
 # linux only.
 def ss(permits)
-  IO.popen("/bin/ss -bt state estabished| awk '{print $4}'") do |pipe|
+  IO.popen("/bin/ss -bt state established| awk '{print $4}'") do |pipe|
     remove_permits(pipe.readlines, permits)
   end
 end
@@ -44,12 +44,17 @@ def warn(image, txt)
   system cmd
 end
 
-# FIXME: 0.3 は conf ファイルの存在確認だけ。内容を見ていない。
+# FIXME: 現行は conf ファイルの存在確認だけ。内容を見ていない。
 def xwatch(conf, image, interval, thres, txt, permits)
   while File.exists?(conf)
-    warn(image, txt) if ss(permits).count > thres
+    count = ss(permits).count
+    if $debug
+      puts "#{Time.now} permits: #{count} thres: #{thres}"
+    end
+    if ss(permits).count > thres
+      warn(image, txt)
+    end
     sleep interval
-    puts Time.now if $debug
   end
 end
 
